@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ตัวติดตามน้ำหนัก</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Kanit', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: #2d3748;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            margin: 0 auto;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        p {
+            font-size: 1.25rem;
+            color: #4a5568;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 15px 20px;
+            margin: 8px 0;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-family: 'Kanit', sans-serif;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px 25px;
+            margin: 15px 0;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .advice {
+            background: #fff0f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 5px solid #ff5c5c;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 30px;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .delete-btn {
+            background: #ff5c5c;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            width: auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="start-page" class="container">
+        <h1>ตัวติดตามน้ำหนัก</h1>
+        <p>ยินดีต้อนรับสู่แอปพลิเคชันติดตามน้ำหนักและ BMI ของคุณ</p>
+        <button onclick="window.location.href='#form-page'; showPage('form-page')">เริ่มต้นใช้งาน</button>
+    </div>
+
+    <div id="form-page" class="container hidden">
+        <h1>กรอกข้อมูลของคุณ</h1>
+        <div class="form-group">
+            <input type="text" id="username" placeholder="ชื่อผู้ใช้">
+        </div>
+        <div class="form-group">
+            <select id="gender">
+                <option value="">เลือกเพศ</option>
+                <option value="male">ชาย</option>
+                <option value="female">หญิง</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <input type="number" id="weight" placeholder="น้ำหนัก (กก.)" step="0.1">
+        </div>
+        <div class="form-group">
+            <input type="number" id="height" placeholder="ส่วนสูง (ซม.)">
+        </div>
+        <div class="form-group">
+            <input type="date" id="date">
+        </div>
+        <button onclick="saveData()">บันทึกข้อมูล</button>
+    </div>
+
+    <div id="result-page" class="container hidden">
+        <h1>ผลการวิเคราะห์</h1>
+        <div class="advice" id="advice"></div>
+        <table>
+            <thead>
+                <tr>
+                    <th>ชื่อ</th>
+                    <th>เพศ</th>
+                    <th>วันที่</th>
+                    <th>น้ำหนัก (กก.)</th>
+                    <th>ส่วนสูง (ซม.)</th>
+                    <th>BMI</th>
+                    <th>จัดการ</th>
+                </tr>
+            </thead>
+            <tbody id="history-table"></tbody>
+        </table>
+        <button onclick="window.location.href='#form-page'; showPage('form-page')">เพิ่มข้อมูลใหม่</button>
+        <button onclick="window.location.href='#start-page'; showPage('start-page')">กลับหน้าแรก</button>
+    </div>
+
+    <script>
+        // Show/hide pages
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.container').forEach(container => {
+                container.classList.add('hidden');
+            });
+            // Show selected page
+            document.getElementById(pageId).classList.remove('hidden');
+        }
+
+        // Save data
+        function saveData() {
+            const username = document.getElementById('username').value;
+            const gender = document.getElementById('gender').value;
+            const weight = parseFloat(document.getElementById('weight').value);
+            const height = parseFloat(document.getElementById('height').value);
+            const date = document.getElementById('date').value;
+
+            if (!username || !gender || !weight || !height || !date) {
+                alert('กรุณากรอกข้อมูลให้ครบถ้วน');
+                return;
+            }
+
+            const bmi = (weight / Math.pow(height/100, 2)).toFixed(2);
+            const records = JSON.parse(localStorage.getItem('weightRecords') || '[]');
+            
+            records.push({
+                username,
+                gender,
+                date,
+                weight,
+                height,
+                bmi
+            });
+
+            localStorage.setItem('weightRecords', JSON.stringify(records));
+            showAdvice(bmi);
+            loadHistory();
+            showPage('result-page');
+            window.location.href = '#result-page';
+        }
+
+        // Show BMI advice
+        function showAdvice(bmi) {
+            const adviceText = document.getElementById('advice');
+            const bmiNum = parseFloat(bmi);
+            let advice = '';
+
+            if (bmiNum < 18.5) {
+                advice = "น้ำหนักต่ำกว่าเกณฑ์ ควรรับประทานอาหารเพิ่มและเน้นโปรตีน";
+            } else if (bmiNum <= 24.9) {
+                advice = "น้ำหนักอยู่ในเกณฑ์ปกติ ดูแลสุขภาพให้สมดุล";
+            } else if (bmiNum <= 29.9) {
+                advice = "น้ำหนักเกินเกณฑ์ ควรควบคุมอาหารและออกกำลังกาย";
+            } else {
+                advice = "น้ำหนักอยู่ในเกณฑ์อ้วน ควรปรึกษาแพทย์";
+            }
+
+            adviceText.innerHTML = `
+                <strong>BMI ของคุณ: ${bmi}</strong><br>
+                ${advice}
+            `;
+        }
+
+        // Load history
+        function loadHistory() {
+            const table = document.getElementById('history-table');
+            const records = JSON.parse(localStorage.getItem('weightRecords') || '[]');
+            
+            table.innerHTML = records.map((record, index) => `
+                <tr>
+                    <td>${record.username}</td>
+                    <td>${record.gender === 'male' ? 'ชาย' : 'หญิง'}</td>
+                    <td>${record.date}</td>
+                    <td>${record.weight}</td>
+                    <td>${record.height}</td>
+                    <td>${record.bmi}</td>
+                    <td>
+                        <button class="delete-btn" onclick="deleteRecord(${index})">ลบ</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Delete record
+        function deleteRecord(index) {
+            const records = JSON.parse(localStorage.getItem('weightRecords') || '[]');
+            records.splice(index, 1);
+            localStorage.setItem('weightRecords', JSON.stringify(records));
+            loadHistory();
+        }
+
+        // Show start page on load
+        window.onload = function() {
+            const hash = window.location.hash.substring(1);
+            if (hash) {
+                showPage(hash);
+            } else {
+                showPage('start-page');
+            }
+        };
+    </script>
+</body>
+</html>
